@@ -1,0 +1,96 @@
+# 1
+# Import libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# -------------------------------
+# Step 2: Create Dataset
+# -------------------------------
+data = {
+    'Student_ID': [101,102,103,104,105,106,107,108,109,110],
+    'Gender': ['M','F','F','M','F','M','F','M','F','M'],
+    'Study_Hours': [2, 5, 3, 8, np.nan, 6, 4, 7, 2, 9],
+    'Attendance (%)': [75, 88, 92, 60, 85, np.nan, 78, 95, 70, 110],
+    'Maths': [56, 78, 89, 45, 67, 120, 72, 88, 54, 91],
+    'Science': [65, 80, 85, np.nan, 70, 95, 68, 90, 60, 88],
+    'English': [70, 75, 80, 55, np.nan, 85, 60, 78, 72, 90]
+}
+
+df = pd.DataFrame(data)
+
+print("Original Dataset:\n", df)
+
+
+# -------------------------------
+# Step 3: Handle Missing Values
+# -------------------------------
+print("\nMissing Values:\n", df.isnull().sum())
+
+# Fill missing values using mean
+df['Study_Hours'].fillna(df['Study_Hours'].mean(), inplace=True)
+df['Attendance (%)'].fillna(df['Attendance (%)'].mean(), inplace=True)
+df['Science'].fillna(df['Science'].mean(), inplace=True)
+df['English'].fillna(df['English'].mean(), inplace=True)
+
+
+# -------------------------------
+# Step 4: Handle Inconsistencies
+# -------------------------------
+# Fix attendance > 100
+df['Attendance (%)'] = df['Attendance (%)'].apply(lambda x: 100 if x > 100 else x)
+
+# Fix marks > 100
+for col in ['Maths', 'Science', 'English']:
+    df[col] = df[col].apply(lambda x: 100 if x > 100 else x)
+
+print("\nAfter Cleaning:\n", df)
+
+
+# -------------------------------
+# Step 5: Detect Outliers
+# -------------------------------
+sns.boxplot(data=df[['Study_Hours','Maths','Science','English']])
+plt.title("Boxplot for Outlier Detection")
+plt.show()
+
+
+# -------------------------------
+# Step 6: Handle Outliers (IQR)
+# -------------------------------
+def remove_outliers(col):
+    Q1 = col.quantile(0.25)
+    Q3 = col.quantile(0.75)
+    IQR = Q3 - Q1
+    
+    lower = Q1 - 1.5 * IQR
+    upper = Q3 + 1.5 * IQR
+    
+    return col.apply(lambda x: lower if x < lower else upper if x > upper else x)
+
+for col in ['Study_Hours','Maths','Science','English']:
+    df[col] = remove_outliers(df[col])
+
+print("\nAfter Outlier Treatment:\n", df)
+
+
+# -------------------------------
+# Step 7: Data Transformation
+# -------------------------------
+
+# Normalization (Scaling)
+df['Study_Hours_Normalized'] = (
+    (df['Study_Hours'] - df['Study_Hours'].min()) /
+    (df['Study_Hours'].max() - df['Study_Hours'].min())
+)
+
+# Log Transformation (reduce skewness)
+df['Maths_log'] = np.log(df['Maths'])
+
+# 8
+
+# -------------------------------
+# Final Output
+# -------------------------------
+print("\nFinal Cleaned Dataset:\n", df)

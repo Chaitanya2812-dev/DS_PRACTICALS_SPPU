@@ -1,0 +1,34 @@
+# 1
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# 2
+df=sns.load_dataset("titanic")
+print(df.head())
+print(df.info())
+
+# 3
+sns.boxplot(x="age",y="sex",hue="survived",data=df)
+plt.title("age wrt to gender and survied")
+plt.xlabel("gender")
+plt.ylabel("age")
+plt.show()
+
+
+📊 Key Observations (Write in Exam)
+✅ 1. Females had higher survival
+In the female group, many orange boxes (survived) are clearly visible
+Indicates more females survived than males
+✅ 2. Males had lower survival rate
+In the male group, blue (not survived) dominates
+Shows many males did not survive
+✅ 3. Age distribution is similar
+Median age (middle line in box) for both survived and not survived is around 25–35 years
+So, age was not a strong factor alone
+✅ 4. Presence of outliers
+Some points above ~70–80 age
+These are outliers (very old passengers)
+✅ 5. Spread of data
+Male age distribution is slightly wider (longer whiskers)
+Indicates more variation in male age

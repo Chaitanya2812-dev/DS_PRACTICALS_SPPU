@@ -1,0 +1,33 @@
+# 1
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# 2
+df = sns.load_dataset("iris")
+print(df.head())
+print(df.info())
+print(df.dtypes)
+
+# 3
+df.hist(figsize=(10, 10))
+plt.title("Histogram of Features")
+plt.show()
+
+# or
+
+for col in df.columns[:-1]:   # exclude 'species'
+    sns.histplot(df[col], bins=10, kde=True)
+    plt.title(f"Histogram of {col}")
+    plt.show()
+
+
+# 4
+
+sns.boxplot(data=df)
+plt.title("Boxplot of Features")
+plt.show()
+
+
+# //Histogram is used only for continuous numerical data.
+Boxplot is mainly used for numerical data and can compare it across categorical groups.
