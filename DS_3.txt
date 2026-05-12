@@ -1,0 +1,98 @@
+PART-1
+--------------------------------------------------------------
+# --------------------------------
+# Step 1: Import Libraries
+# --------------------------------
+import pandas as pd
+import kagglehub
+from kagglehub import KaggleDatasetAdapter
+
+# --------------------------------
+# Step 2: Load Adult Income Dataset
+# --------------------------------
+file_path = ""
+
+df = kagglehub.load_dataset(
+    KaggleDatasetAdapter.PANDAS,
+    "wenruliu/adult-income-dataset",
+    file_path
+)
+
+# Display first 5 rows
+print("First 5 Records:\n")
+print(df.head())
+
+# --------------------------------
+# Step 3: Check Column Names
+# --------------------------------
+print("\nColumn Names:\n")
+print(df.columns)
+
+# --------------------------------
+# Step 4: Summary Statistics of Age
+# --------------------------------
+print("\nSummary Statistics of Age:\n")
+
+print("Mean =", df['age'].mean())
+print("Median =", df['age'].median())
+print("Minimum =", df['age'].min())
+print("Maximum =", df['age'].max())
+print("Standard Deviation =", df['age'].std())
+
+# --------------------------------
+# Step 5: Group Age by Income Category
+# --------------------------------
+print("\nAge Statistics Grouped by Income:\n")
+
+grouped_stats = df.groupby('income')['age'].agg(
+    ['mean', 'median', 'min', 'max', 'std']
+)
+
+print(grouped_stats)
+
+# --------------------------------
+# Step 6: Convert Categorical Variable to Numeric
+# --------------------------------
+# <=50K = 0
+# >50K = 1
+
+df['income_numeric'] = df['income'].map({
+    '<=50K': 0,
+    '>50K': 1
+})
+
+print("\nIncome Converted to Numeric:\n")
+print(df[['income', 'income_numeric']].head())
+
+
+
+
+
+
+
+PART-2
+--------------------------------------
+import pandas as pd
+import seaborn as sns
+
+# Load dataset
+# df = pd.read_csv('iris.csv')
+df = sns.load_dataset('iris')
+
+# Display first few rows (optional)
+print("Dataset Preview:\n", df.head())
+
+# Group by species and calculate statistics
+grouped = df.groupby('species')
+
+# Mean
+print("\nMean values:\n", grouped.mean())
+
+# Standard Deviation
+print("\nStandard Deviation:\n", grouped.std())
+
+# Percentiles (25%, 50%, 75%)
+print("\nPercentiles:\n", grouped.quantile([0.25, 0.5, 0.75]))
+
+# Full statistical summary
+print("\nComplete Statistical Summary:\n", grouped.describe())

@@ -1,0 +1,114 @@
+# -------------------------------
+# Step 1: Import Libraries
+# -------------------------------
+import pandas as pd
+import nltk
+
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer, WordNetLemmatizer
+from nltk import pos_tag
+
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+
+# -------------------------------
+# Step 2: Download NLTK Data
+# (Run only first time)
+# -------------------------------
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
+
+# -------------------------------
+# Step 3: Create Dataset
+# -------------------------------
+data = {
+    "text": [
+        "I love machine learning and data science",
+        "Machine learning is amazing and powerful",
+        "Data science includes statistics and programming",
+        "I enjoy learning new technologies"
+    ]
+}
+
+df = pd.DataFrame(data)
+
+print("Original Dataset:\n")
+print(df)
+
+# -------------------------------
+# Step 4: Tokenization
+# -------------------------------
+df['tokens'] = df['text'].apply(word_tokenize)
+
+print("\nTokenization:\n")
+print(df['tokens'])
+
+# -------------------------------
+# Step 5: POS Tagging
+# -------------------------------
+df['pos_tags'] = df['tokens'].apply(pos_tag)
+
+print("\nPOS Tagging:\n")
+print(df['pos_tags'])
+
+# -------------------------------
+# Step 6: Stopword Removal
+# -------------------------------
+stop_words = set(stopwords.words('english'))
+
+df['filtered'] = df['tokens'].apply(
+    lambda words: [w for w in words if w.lower() not in stop_words]
+)
+
+print("\nAfter Stopword Removal:\n")
+print(df['filtered'])
+
+# -------------------------------
+# Step 7: Stemming
+# -------------------------------
+stemmer = PorterStemmer()
+
+df['stemmed'] = df['filtered'].apply(
+    lambda words: [stemmer.stem(w) for w in words]
+)
+
+print("\nStemming:\n")
+print(df['stemmed'])
+
+# -------------------------------
+# Step 8: Lemmatization
+# -------------------------------
+lemmatizer = WordNetLemmatizer()
+
+df['lemmatized'] = df['filtered'].apply(
+    lambda words: [lemmatizer.lemmatize(w) for w in words]
+)
+
+print("\nLemmatization:\n")
+print(df['lemmatized'])
+
+# -------------------------------
+# Step 9: Term Frequency (TF)
+# -------------------------------
+cv = CountVectorizer()
+
+X_tf = cv.fit_transform(df['text'])
+
+tf_df = pd.DataFrame(X_tf.toarray(), columns=cv.get_feature_names_out())
+
+print("\nTerm Frequency (TF):\n")
+print(tf_df)
+
+# -------------------------------
+# Step 10: TF-IDF
+# -------------------------------
+tfidf = TfidfVectorizer()
+
+X_tfidf = tfidf.fit_transform(df['text'])
+
+tfidf_df = pd.DataFrame(X_tfidf.toarray(), columns=tfidf.get_feature_names_out())
+
+print("\nTF-IDF:\n")
+print(tfidf_df)
